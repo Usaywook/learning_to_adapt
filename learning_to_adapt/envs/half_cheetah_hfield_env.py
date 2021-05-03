@@ -6,12 +6,14 @@ import os
 
 
 class HalfCheetahHFieldEnv(MujocoEnv, Serializable):
-    def __init__(self, task='hfield', reset_every_episode=False, reward=True, *args, **kwargs):
+    def __init__(self, task='hfield', reset_every_episode=False, reward=True, max_timesteps=1000, *args, **kwargs):
         Serializable.quick_init(self, locals())
 
         self.cripple_mask = None
         self.reset_every_episode = reset_every_episode
         self.first = True
+        self.timesteps = 0
+        self.max_timesteps=max_timesteps
         MujocoEnv.__init__(self, os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                               "assets", "half_cheetah_hfield.xml"))
 
@@ -54,6 +56,8 @@ class HalfCheetahHFieldEnv(MujocoEnv, Serializable):
         reward = forward_reward - ctrl_cost
         done = False
         info = {}
+        self.timesteps += 1
+        done = self.timesteps >= self.max_timesteps
         return next_obs, reward, done, info
 
     def reward(self, obs, action, next_obs):
@@ -177,11 +181,14 @@ class HalfCheetahHFieldEnv(MujocoEnv, Serializable):
 
 
 if __name__ == '__main__':
-    env = HalfCheetahHFieldEnv(task='hfield')
+    # env = HalfCheetahHFieldEnv(task='hfield')
+    # env = HalfCheetahHFieldEnv(task='hill')
+    env = HalfCheetahHFieldEnv(task='basin')
     while True:
         env.reset()
         env.reset_task()
-        for _ in range(100):
+        for _ in range(1000):
+            env.get_viewer().cam.distance = env.model.stat.extent * 3.0
             env.render()
             env.step(env.action_space.sample())
         env.stop_viewer()

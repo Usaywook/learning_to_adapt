@@ -7,11 +7,13 @@ import os
 
 class HalfCheetahBlocksEnv(MujocoEnv, Serializable):
 
-    def __init__(self, task='damping', reset_every_episode=False):
+    def __init__(self, task='damping', reset_every_episode=False, max_timesteps=1000):
         Serializable.quick_init(self, locals())
 
         self.reset_every_episode = reset_every_episode
         self.first = True
+        self.timesteps = 0
+        self.max_timesteps=max_timesteps
         MujocoEnv.__init__(self, os.path.join(os.path.abspath(os.path.dirname(__file__)),
                                               "assets", "half_cheetah_blocks.xml"))
         task = None if task == 'None' else task
@@ -51,6 +53,8 @@ class HalfCheetahBlocksEnv(MujocoEnv, Serializable):
         reward = forward_reward - ctrl_cost
         done = False
         info = {}
+        self.timesteps += 1
+        done = self.timesteps >= self.max_timesteps
         return next_obs, reward, done, info
 
     def reward(self, obs, action, next_obs):

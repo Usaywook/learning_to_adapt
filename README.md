@@ -51,4 +51,4 @@ In order to visualize and test a learned policy run:
 ``` python experiment_utils/sim_policy data/$EXPERIMENT_NAME```
 
 ## Acknowledgements
-This repository is partly based on [Duan et al., 2016](https://arxiv.org/abs/1611.02779).
+This repository is partly baspip ed on [Duan et al., 2016](https://arxiv.org/abs/1611.02779).
